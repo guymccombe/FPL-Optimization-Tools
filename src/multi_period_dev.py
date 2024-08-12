@@ -256,7 +256,21 @@ def prep_data(my_data, options):
     buy_price = (merged_data['now_cost']/10).to_dict()
     sell_price = {i['element']: i['selling_price']/10 for i in my_data['picks']}
     price_modified_players = []
-    
+
+    custom_price = options.get('price_data', '')
+    if len(custom_price) > 0:
+        if custom_price.lower() in {"unlimited", "ul"}:
+            buy_price = sell_price = {k: 0 for k in buy_price}
+        else:
+            path = f"../data/prices/{custom_price}.csv"
+            try:
+                price_df = pd.read_csv(path, index_col="ID")
+            except FileNotFoundError as e:
+                print(f"Custom price was specified, but {path} was not found")
+                raise e
+
+            buy_price = sell_price = price_df["BV"].to_dict()
+
     preseason = options.get('preseason', False)
     if not preseason:
         for i in my_data['picks']:

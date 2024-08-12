@@ -5,6 +5,7 @@
     "ft_use_penalty": 0.5,
     "itb_value": 0.08,
     "itb_loss_per_transfer": 0,
+    "price_data": "",
     "no_future_transfer": false,
     "no_transfer_last_gws": null,
     "no_transfer_by_position": [],
