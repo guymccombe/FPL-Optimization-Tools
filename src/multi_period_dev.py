@@ -329,6 +329,8 @@ def solve_multi_period_fpl(data, options):
         User controlled values for the problem instance
     """
 
+    print("This solver is free for personal, educational, or non-commercial use under the Apache License 2.0. Commercial entities must obtain a Commercial License before accessing, viewing, or using the code for any commercial purposes. Unauthorized access or use by commercial entities without a valid commercial license is strictly prohibited. To obtain a commercial license, please contact us at info@fploptimized.com.")
+
     # Arguments
     problem_id = get_random_id(5)
     horizon = options.get('horizon', 3)
@@ -383,7 +385,7 @@ def solve_multi_period_fpl(data, options):
     all_gw = [next_gw-1] + gameweeks
     order = [0, 1, 2, 3]
     price_modified_players = data['price_modified_players']
-    ft_states = [1, 2, 3, 4, 5]
+    ft_states = [0, 1, 2, 3, 4, 5]
 
     # Model
     model = so.Model(name=problem_name)
@@ -508,7 +510,7 @@ def solve_multi_period_fpl(data, options):
     
     ## Free transfer constraints
     # 2024-2025 variation: min 1 / max 5 / roll over WC & FH
-    raw_gw_ft = {w: free_transfers[w] - number_of_transfers[w] + 1 - use_wc[w] - use_fh[w] for w in gameweeks}
+    raw_gw_ft = {w: free_transfers[w] - transfer_count[w] + 1 - use_wc[w] - use_fh[w] for w in gameweeks}
     model.add_constraints((free_transfers[w+1] <= raw_gw_ft[w] + 16 * ft_below_lb[w] for w in gameweeks if w+1 in gameweeks), name='newft1')
     model.add_constraints((free_transfers[w+1] <= 1 + 4 * (1-ft_below_lb[w]) for w in gameweeks if w+1 in gameweeks), name='newft2')
     model.add_constraints((free_transfers[w+1] >= raw_gw_ft[w] - 2 * ft_above_ub[w] for w in gameweeks if w+1 in gameweeks and w > 1), name='newft3')
